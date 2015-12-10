@@ -96,13 +96,13 @@ class LoginViewController: UIViewController , UITextFieldDelegate {
                 let json = try NSJSONSerialization.JSONObjectWithData(data!, options:NSJSONReadingOptions.AllowFragments )
                 
                 let res:NSDictionary = json.objectForKey("meta") as! NSDictionary
-//                let resResponse:NSDictionary = json.objectForKey("response") as! NSDictionary
+                let resResponse:NSDictionary = json.objectForKey("response") as! NSDictionary
                 
 //                print(String(res["status"]!))
                 
                 if String(res["status"]!) == "201"{
-//                    self.localdata.setObject(String(resResponse["auth_token"]!) , forKey: "auth_token")
-//                    self.localdata.synchronize()
+                    self.localdata.setObject(String(resResponse["auth_token"]!) , forKey: "auth_token")
+                    self.localdata.synchronize()
                     self.performSegueWithIdentifier("loginHomeSegue", sender: self)
                 }else{
                     print("Loginできませんでした")

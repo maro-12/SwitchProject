@@ -52,6 +52,10 @@ class NewInfraredViewController: UIViewController , UITextFieldDelegate {
             inputTextField = textField
             textField.placeholder = "赤外線の名前"
         }
+        alertController.addTextFieldWithConfigurationHandler{textField -> Void in
+            inputTextField = textField
+            textField.placeholder = "グループID"
+        }
 //        alertController.addTextFieldWithConfigurationHandler { textField -> Void in
 //            passwordField = textField
 //            textField.secureTextEntry = true
