@@ -1,56 +1,49 @@
 //
-//  HomeViewController.swift
-//  apiTest
+//  InfraredIndexViewController.swift
+//  SwitchProject
 //
-//  Created by Naoya Kurahashi on 2015/12/07.
+//  Created by Naoya Kurahashi on 2015/12/11.
 //  Copyright © 2015年 Naoya Kurahashi. All rights reserved.
 //
 
 import UIKit
 
-class HomeViewController: UIViewController {
+class InfraredIndexViewController: UIViewController {
     private var myButton: UIButton!
     let localdata = NSUserDefaults.standardUserDefaults()
-    var infraredGroupList = [String:Int]()
-    var firstButtonPosition:Int = 70
+    var infraredList = [String:Int]()
+    var firstButtonPosition = 0
     
-    @IBOutlet weak var secondView: UIView!
-    @IBOutlet weak var addButton: UIButton!
-    
+    @IBOutlet weak var scrollView: UIView!
+
     override func viewDidLoad() {
         super.viewDidLoad()
-        buttonSet("全て" , yPosition:0)
-        roundButtonLayout(addButton)
-        getGroup()
         
+        getInfrared()
         
-        if let new = localdata.dictionaryForKey("infraredGroupList"){
-            for name in new.keys{
-                buttonSet(name , yPosition: firstButtonPosition)
-                firstButtonPosition += 70
+        if let infrared = localdata.dictionaryForKey("infraredList"){
+            for name in infrared.keys{
+                buttonSet(name , yPosition:firstButtonPosition)
+                firstButtonPosition += 5
             }
-        }else{
-            print("ser Error")
         }
-//        print(new!["テレビ"])
-        
-//        buttonLayout(all)
-//        buttonLayout(televi)
-//        buttonLayout(eacon)
-//        buttonSet(denki)
-//        buttonSet(add)
         // Do any additional setup after loading the view.
+    }
+
+    override func didReceiveMemoryWarning() {
+        super.didReceiveMemoryWarning()
+        // Dispose of any resources that can be recreated.
     }
     
     func buttonSet(buttonName : String , yPosition : Int){
         myButton = UIButton()
-        myButton.frame = CGRectMake(0,0,200,50)
+        myButton.frame = CGRectMake(0,0,320,30)
         myButton.setTitle(buttonName , forState: UIControlState.Normal)
         myButton.setTitleColor(UIColor.whiteColor() , forState: UIControlState.Normal)
         myButton.layer.position = CGPoint(x: self.view.frame.width/2, y:CGFloat(yPosition))
-//        myButton.addTarget(self, action: "onClickMyButton:", forControlEvents: .TouchUpInside)
+        //        myButton.addTarget(self, action: "onClickMyButton:", forControlEvents: .TouchUpInside)
         
-        self.secondView.addSubview(myButton)
+        self.scrollView.addSubview(myButton)
         self.buttonLayout(myButton)
     }
     
@@ -62,23 +55,19 @@ class HomeViewController: UIViewController {
     }
     
     func roundButtonLayout(button :UIButton){
-        button.backgroundColor = UIColor.mcIndigo300()
+        button.backgroundColor = UIColor.mcTeal100()
         button.layer.masksToBounds = true
         button.layer.cornerRadius = 20
         button.layer.shadowOpacity = 0.4
         button.layer.shadowOffset = CGSizeMake(2.0 , 2.0)
     }
 
-    override func didReceiveMemoryWarning() {
-        super.didReceiveMemoryWarning()
-        // Dispose of any resources that can be recreated.
-    }
     
-    func getGroup(){
+    func getInfrared(){
         let urlHead:String = self.localdata.objectForKey("siteURL") as! String
         // apiで取得するためのURLを指定
         let auth_token = localdata.objectForKey("auth_token")
-        let URL = NSURL(string: "\(urlHead):80/api/v1/group.json?auth_token=\(auth_token)")
+        let URL = NSURL(string: "\(urlHead):80/api/v1/ir.json?auth_token=\(auth_token)")
         let req = NSMutableURLRequest(URL:URL!)
         
         
@@ -86,8 +75,8 @@ class HomeViewController: UIViewController {
         let session = NSURLSession(configuration: configuration, delegate:nil, delegateQueue:NSOperationQueue.mainQueue())
         
         
-//        req.HTTPMethod = "POST"
-//        req.HTTPBody = "".dataUsingEncoding(NSUTF8StringEncoding)
+        //        req.HTTPMethod = "POST"
+        //        req.HTTPBody = "".dataUsingEncoding(NSUTF8StringEncoding)
         
         //        print(self.user_name.text!)
         //        print(self.user_passwd.text!)
@@ -102,18 +91,18 @@ class HomeViewController: UIViewController {
                 
                 //                print(String(res["status"]!))
                 if String(res["status"]!) == "200"{
-//                    print(resResponse["groups"]![0]!["id"])
-//                    self.localdata.setObject(String(resResponse["auth_token"]!) , forKey: "auth_token")
-//                    self.localdata.synchronize()
-//                    self.performSegueWithIdentifier("loginHomeSegue", sender: self)
-                    for item in resResponse["groups"] as! NSArray{
-                        let groupName:String = item["name"] as! String
-                        let groupId:Int = item["id"] as! Int
-                
-                        self.infraredGroupList[groupName] = groupId
-                        self.localdata.setObject(self.infraredGroupList , forKey: "infraredGroupList")
+                    //                    print(resResponse["groups"]![0]!["id"])
+                    //                    self.localdata.setObject(String(resResponse["auth_token"]!) , forKey: "auth_token")
+                    //                    self.localdata.synchronize()
+                    //                    self.performSegueWithIdentifier("loginHomeSegue", sender: self)
+                    for item in resResponse["infrareds"] as! NSArray{
+                        let infraredName:String = item["name"] as! String
+                        let infraredId:Int = item["id"] as! Int
+                        
+                        self.infraredList[infraredName] = infraredId
+                        self.localdata.setObject(self.infraredList , forKey: "infraredList")
                         self.localdata.synchronize()
-                        print(self.infraredGroupList)
+//                        print(self.infraredList)
                     }
                 }else{
                     print("取得できませんでした")
@@ -127,8 +116,6 @@ class HomeViewController: UIViewController {
         
         task.resume()
     }
-    
-
 
     /*
     // MARK: - Navigation

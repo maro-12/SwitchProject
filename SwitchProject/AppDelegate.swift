@@ -18,7 +18,7 @@ class AppDelegate: UIResponder, UIApplicationDelegate {
 
     func application(application: UIApplication, didFinishLaunchingWithOptions launchOptions: [NSObject: AnyObject]?) -> Bool {
         let defaultSet = NSUserDefaults.standardUserDefaults()
-        var dic = ["firstLaunch": true]
+        let dic = ["firstLaunch": true]
         defaultSet.registerDefaults(dic)
         // Override point for customization after application launch.
         return true

@@ -8,11 +8,10 @@
 
 import UIKit
 
-class ViewController: UIViewController , UITextFieldDelegate {
+class SignUpViewController: UIViewController , UITextFieldDelegate {
 
     override func viewDidLoad() {
         super.viewDidLoad()
-        // Do any additional setup after loading the view, typically from a nib.
         screen_name.delegate = self
         email.delegate = self
         confirmation.delegate = self
@@ -25,7 +24,6 @@ class ViewController: UIViewController , UITextFieldDelegate {
 
     override func didReceiveMemoryWarning() {
         super.didReceiveMemoryWarning()
-        // Dispose of any resources that can be recreated.
     }
     
     @IBOutlet weak var screen_name: UITextField!
@@ -39,14 +37,15 @@ class ViewController: UIViewController , UITextFieldDelegate {
     
     
     @IBAction func login(sender: UIButton) {
-        print(self.screen_name.text!)
-        print(self.email.text!)
-        print(self.password.text!)
+//        print(self.screen_name.text!)
+//        print(self.email.text!)
+//        print(self.password.text!)
+        if(self.screen_name == nil || self.email == nil || self.confirmation == nil || self.password == nil){
+            sender.enabled = false
+        }
         
         let interim_auth_token:String = self.localdata.objectForKey("Interim_auth_token") as! String
-        post1Data(interim_auth_token)
-//      print(self.localdata.objectForKey("auth"))
-
+        postData(interim_auth_token)
     }
     //    func textField(screen_name: UITextField, shouldChangeCharactersInRange range: NSRange, replacementString string: String) -> Bool {
 //
@@ -98,7 +97,7 @@ class ViewController: UIViewController , UITextFieldDelegate {
         task.resume()
     }
     
-    func post1Data(token : String){
+    func postData(token : String){
         let urlHead:String = self.localdata.objectForKey("siteURL") as! String
         // apiで取得するためのURLを指定
         let URL = NSURL(string: "\(urlHead):80/api/v1/auth/signup.json")

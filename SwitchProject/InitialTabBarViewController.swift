@@ -15,7 +15,7 @@ class InitialTabBarViewController: UITabBarController {
     override func viewDidLoad() {
         super.viewDidLoad()
 //        if defaultSet.boolForKey("firstLunch"){
-            localdata.setObject("http://0d3158f0.ngrok.io" , forKey : "siteURL")
+            localdata.setObject("http://3be4b217.ngrok.io" , forKey : "siteURL")
             
 //            defaultSet.setBool(false, forKey: "firstLaunch")
 //        }

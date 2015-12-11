@@ -30,7 +30,9 @@ class LoginViewController: UIViewController , UITextFieldDelegate {
     
     
     @IBAction func login(sender: UIButton) {
-        
+        if(self.user_name == nil || self.user_passwd == nil){
+            sender.enabled = false
+        }
         postData()
         //        self.performSegueWithIdentifier("homeViewSegue", sender: self)
     }
@@ -40,39 +42,6 @@ class LoginViewController: UIViewController , UITextFieldDelegate {
         return true
     }
 
-    
-//    func getData(){
-//        let URL = NSURL(string: "http://b917fc44.ngrok.io:80/api/v1/auth/login.json")
-//        let req = NSMutableURLRequest(URL:URL!)
-//        
-//        
-//        let configuration = NSURLSessionConfiguration.defaultSessionConfiguration()
-//        let session = NSURLSession(configuration: configuration, delegate:nil, delegateQueue:NSOperationQueue.mainQueue())
-//        
-//        let task = session.dataTaskWithRequest(req ,completionHandler:{
-//            (data , response, error) -> Void in
-//            do{
-//                let json = try NSJSONSerialization.JSONObjectWithData(data!, options:NSJSONReadingOptions.AllowFragments )
-//                
-//                let resMeta:NSDictionary = json.objectForKey("meta") as! NSDictionary
-//                let resResponse:NSDictionary = json.objectForKey("response") as! NSDictionary
-//                
-//                //                let auth_token:String = String(resResponse["auth_token"]!)
-//                
-//                if String(resMeta["status"]!) == "200"{
-//                    self.localdata.setObject(resResponse["auth_token"]! , forKey:"Interim_auth_token")
-//                    self.localdata.synchronize()
-//                }else{
-//                    print("auth_token取得失敗")
-//                }
-//                
-//            }catch{
-//                
-//            }
-//        })
-//        task.resume()
-//    }
-    
     func postData(){
         let urlHead:String = self.localdata.objectForKey("siteURL") as! String
         // apiで取得するためのURLを指定
