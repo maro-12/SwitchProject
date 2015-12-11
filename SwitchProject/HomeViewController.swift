@@ -19,6 +19,9 @@ class HomeViewController: UIViewController {
     
     override func viewDidLoad() {
         super.viewDidLoad()
+        if(localdata.objectForKey("auth_token") == nil){
+            self.performSegueWithIdentifier("loginViewSegue", sender: self)
+        }
         buttonSet("全て" , yPosition:0)
         roundButtonLayout(addButton)
         getGroup()
@@ -80,11 +83,10 @@ class HomeViewController: UIViewController {
         let auth_token = localdata.objectForKey("auth_token")
         let URL = NSURL(string: "\(urlHead):80/api/v1/group.json?auth_token=\(auth_token)")
         let req = NSMutableURLRequest(URL:URL!)
-        
-        
         let configuration = NSURLSessionConfiguration.defaultSessionConfiguration()
         let session = NSURLSession(configuration: configuration, delegate:nil, delegateQueue:NSOperationQueue.mainQueue())
         
+        infraredGroupList = [:]
         
 //        req.HTTPMethod = "POST"
 //        req.HTTPBody = "".dataUsingEncoding(NSUTF8StringEncoding)

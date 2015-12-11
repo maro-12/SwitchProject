@@ -14,15 +14,18 @@ class InitialTabBarViewController: UITabBarController {
     
     override func viewDidLoad() {
         super.viewDidLoad()
-//        if defaultSet.boolForKey("firstLunch"){
+        if defaultSet.boolForKey("firstLunch"){
             localdata.setObject("http://3be4b217.ngrok.io" , forKey : "siteURL")
-            
-//            defaultSet.setBool(false, forKey: "firstLaunch")
+            localdata.synchronize()
+            defaultSet.setBool(false, forKey: "firstLaunch")
+        }
+        
+//        if(getData()){
+//            if(localdata.objectForKey("auth_token") == nil){
+//                self.performSegueWithIdentifier("loginViewSegue", sender: self)
+//            }
 //        }
-        
-        
         getData()
-
         // Do any additional setup after loading the view.
     }
 
@@ -31,9 +34,9 @@ class InitialTabBarViewController: UITabBarController {
         // Dispose of any resources that can be recreated.
     }
     
-    func getData() {
+    func getData(){
+//        var urlCollect:Bool = true
         let urlHead:String = self.localdata.objectForKey("siteURL") as! String
-        
         let siteURL = NSURL(string: "\(urlHead):80/api/v1/auth/token.json")
 //        let auth_token : String = self.localdata.objectForKey("auth") as! String
 //        let status:String = localdata.objectForKey("status") as! String
@@ -47,12 +50,14 @@ class InitialTabBarViewController: UITabBarController {
             do{
                 _ = try NSJSONSerialization.JSONObjectWithData(data!, options:NSJSONReadingOptions.AllowFragments )
             }catch{
+//                urlCollect = false
                 self.performSegueWithIdentifier("siteURLErrorSegue", sender: self)
 //                print(auth_token)
             }
         })
         task.resume()
         print("hello")
+//        return urlCollect
     }
 
 
