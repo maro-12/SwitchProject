@@ -7,6 +7,7 @@
 //
 
 import UIKit
+import Alamofire
 
 class UrlErrorViewController: UIViewController , UITextFieldDelegate {
     
@@ -26,6 +27,7 @@ class UrlErrorViewController: UIViewController , UITextFieldDelegate {
     }
     
     @IBOutlet weak var newSiteUrl: UITextField!
+    @IBOutlet weak var messageLabel: UILabel!
     @IBAction func setURL(sender: UIButton) {
         setURL()
     }
@@ -35,32 +37,49 @@ class UrlErrorViewController: UIViewController , UITextFieldDelegate {
         return true
     }
     
-    func setURL() {
+//     func setURL() {
+//         let newUrlHead:String = self.newSiteUrl.text!
+        
+//         let siteURL = NSURL(string: "\(newUrlHead):80/api/v1/auth/token.json")
+// //        let auth_token : String = self.localdata.objectForKey("auth") as! String
+//         //        let status:String = localdata.objectForKey("status") as! String
+//         let req = NSMutableURLRequest(URL:siteURL!)
+        
+//         let configuration = NSURLSessionConfiguration.defaultSessionConfiguration()
+//         let session = NSURLSession(configuration: configuration, delegate:nil, delegateQueue:NSOperationQueue.mainQueue())
+        
+//         let task = session.dataTaskWithRequest(req, completionHandler: {
+//             (data, response, error) -> Void in
+//             do{
+//                 _ = try NSJSONSerialization.JSONObjectWithData(data!, options:NSJSONReadingOptions.AllowFragments )
+//                 self.localdata.setObject(self.newSiteUrl.text , forKey:"siteURL")
+//                 self.performSegueWithIdentifier("setURLSegue", sender: self)
+//             }catch{
+// //                self.performSegueWithIdentifier("siteURLErrorSegue", sender: self)
+// //                print(auth_token)
+//                 self.newSiteUrl.text = "もう一度入力してください"
+//             }
+//         })
+//         task.resume()
+// //        print("hello")
+//     }
+
+    func setURL(){
         let newUrlHead:String = self.newSiteUrl.text!
-        
-        let siteURL = NSURL(string: "\(newUrlHead):80/api/v1/auth/token.json")
-//        let auth_token : String = self.localdata.objectForKey("auth") as! String
-        //        let status:String = localdata.objectForKey("status") as! String
-        let req = NSMutableURLRequest(URL:siteURL!)
-        
-        let configuration = NSURLSessionConfiguration.defaultSessionConfiguration()
-        let session = NSURLSession(configuration: configuration, delegate:nil, delegateQueue:NSOperationQueue.mainQueue())
-        
-        let task = session.dataTaskWithRequest(req, completionHandler: {
-            (data, response, error) -> Void in
+        Alamofire.request(.GET , "\(newUrlHead):80/api/v1/auth/token.json").response{(request , response , data , error) in 
             do{
-                _ = try NSJSONSerialization.JSONObjectWithData(data!, options:NSJSONReadingOptions.AllowFragments )
-                self.localdata.setObject(self.newSiteUrl.text , forKey:"siteURL")
+                var obj : AnyObject? = try NSJSONSerialization.JSONObjectWithData(data!, options: NSJSONReadingOptions.AllowFragments)
+                self.localdata.setObject(newUrlHead, forKey:"siteURL")
                 self.performSegueWithIdentifier("setURLSegue", sender: self)
             }catch{
-//                self.performSegueWithIdentifier("siteURLErrorSegue", sender: self)
-//                print(auth_token)
-                self.newSiteUrl.text = "もう一度入力してください"
+                self.messageLabel.textColor = UIColor.redColor()
+                self.messageLabel.text = "This url is wrong... enter again"
+                self.newSiteUrl.placeholder = "http://example.ngroc.io"
             }
-        })
-        task.resume()
-//        print("hello")
+        }
     }
+
+
 
 
     /*
