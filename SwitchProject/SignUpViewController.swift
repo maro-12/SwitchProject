@@ -90,7 +90,8 @@ class SignUpViewController: UIViewController , UITextFieldDelegate {
     }
     
     func getAuthToken(){
-        Alamofire.request(.GET,"http://db588d45.ngrok.io:80/api/v1/auth/token.json").response{(request , response , data , error) in
+        let urlHead:String = self.localdata.objectForKey("siteURL") as! String
+        Alamofire.request(.GET,"\(urlHead):80/api/v1/auth/token.json").response{(request , response , data , error) in
             do{
                 var obj : AnyObject? = try NSJSONSerialization.JSONObjectWithData(data!, options: NSJSONReadingOptions.AllowFragments)
                 if let meta = obj!["meta"] as? [String : AnyObject]{
@@ -107,7 +108,7 @@ class SignUpViewController: UIViewController , UITextFieldDelegate {
                     print("auth_token取得失敗")
                 }
             }catch{
-                print("Error")
+                print("Errorrrr")
             }
         }
     }

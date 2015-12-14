@@ -80,22 +80,10 @@ class LaunchViewController: UIViewController {
         let urlHead:String = self.localdata.objectForKey("siteURL") as! String
         Alamofire.request(.GET , "\(urlHead):80/api/v1/auth/token.json").response{(request , response , data , error) in 
             do{
-                var obj : AnyObject? = try NSJSONSerialization.JSONObjectWithData(data!, options: NSJSONReadingOptions.AllowFragments)
+                var obj:AnyObject? = try NSJSONSerialization.JSONObjectWithData(data!, options: NSJSONReadingOptions.AllowFragments)
             }catch{
                 self.collectURL = false
             }
         }
     }
-
-
-    /*
-    // MARK: - Navigation
-
-    // In a storyboard-based application, you will often want to do a little preparation before navigation
-    override func prepareForSegue(segue: UIStoryboardSegue, sender: AnyObject?) {
-        // Get the new view controller using segue.destinationViewController.
-        // Pass the selected object to the new view controller.
-    }
-    */
-
 }
