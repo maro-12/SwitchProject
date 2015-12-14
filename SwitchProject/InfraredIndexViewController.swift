@@ -18,7 +18,9 @@ class InfraredIndexViewController: UIViewController {
     var apiURL:String?
     var groupID:Int?
     
+    
     @IBOutlet weak var scrollView: UIView!
+    @IBOutlet weak var userLabel: UILabel!
 
     override func viewDidLoad() {
         super.viewDidLoad()
@@ -35,6 +37,8 @@ class InfraredIndexViewController: UIViewController {
     
     override func viewWillAppear(animated:Bool){
         self.viewDidDisappear(animated)
+        let username = String(localdata.objectForKey("userName")!)
+        userLabel.text = username
         // self.localdata.removeObjectForKey("infraredList")
          groupID = localdata.integerForKey("groupID")
         if(groupID == 0){

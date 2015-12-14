@@ -17,6 +17,7 @@ class HomeViewController: UIViewController {
     
     @IBOutlet weak var secondView: UIView!
     @IBOutlet weak var addButton: UIButton!
+    @IBOutlet weak var userLabel: UILabel!
     
     override func viewDidLoad() {
         super.viewDidLoad()
@@ -26,6 +27,8 @@ class HomeViewController: UIViewController {
     
     override func viewWillAppear(animated: Bool) {
         super.viewDidDisappear(animated)
+        let username = String(localdata.objectForKey("userName")!)
+        userLabel.text = username
         getGroup()
     }
     

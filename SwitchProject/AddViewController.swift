@@ -7,13 +7,19 @@
 //
 
 import UIKit
+import Alamofire
 
 class AddViewController: UIViewController ,UITextFieldDelegate {
 
     override func viewDidLoad() {
         super.viewDidLoad()
-
         groupName.delegate = self
+        groupName.placeholder = "new group name"
+
+        buttonDesign(addInfrared)
+        buttonDesign(addGroup)
+
+        textDesign(groupName)
         // Do any additional setup after loading the view.
     }
 
@@ -22,79 +28,80 @@ class AddViewController: UIViewController ,UITextFieldDelegate {
         // Dispose of any resources that can be recreated.
     }
     @IBOutlet weak var groupName: UITextField!
+    @IBOutlet weak var addInfrared: UIButton!
+    @IBOutlet weak var addGroup: UIButton!
     @IBAction func groupAdd(sender: UIButton) {
-        newGroupAdd()
+        postNewGroup()
     }
     let localdata = NSUserDefaults.standardUserDefaults()
     
+    func buttonDesign(button : UIButton){
+        let borderWidth :CGFloat = 1.0
+        button.backgroundColor = UIColor.mcOrange500()
+        button.layer.cornerRadius = 9
+        button.layer.shadowOpacity = 0.4
+        button.layer.shadowOffset = CGSizeMake(1.0 , 3.0)
+     }
+
+    func textDesign(textField :UITextField!){
+        let border = CALayer()
+        let width = CGFloat(1.0)
+        border.borderColor = UIColor.mcGrey200().CGColor
+        border.frame = CGRect(x: 0, y: textField.frame.size.height - width, width:  textField.frame.size.width, height: textField.frame.size.height)
+        
+        border.borderWidth = width
+        textField.layer.addSublayer(border)
+        textField.layer.masksToBounds = true
+    }
+    
+    func textFieldShouldReturn(textField: UITextField) -> Bool{
+        textField.resignFirstResponder()
+        return true
+    }
 
     func inputAlert() {
         // var inputTextField: UITextField?
-//        var passwordField: UITextField?
         let name = self.groupName.text!
         let alertController: UIAlertController = UIAlertController(title: "グループを作成しました", message: "group name is \(name)", preferredStyle: .Alert)
-        
-        // let cancelAction: UIAlertAction = UIAlertAction(title: "Cancel", style: .Cancel) { action -> Void in
-        //     print("Cancel")
-        // }
-        // alertController.addAction(cancelAction)
-        
         let doneAction: UIAlertAction = UIAlertAction(title: "Done", style: .Default) { action -> Void in
             print("Done")
-            // print(inputTextField?.text)
-//            print(passwordField?.text)
         }
         alertController.addAction(doneAction)
-        
-        // alertController.addTextFieldWithConfigurationHandler { textField -> Void in
-        //     inputTextField = textField
-        //     textField.placeholder = "赤外線の名前"
-        // }
-        // alertController.addTextFieldWithConfigurationHandler{textField -> Void in
-        //     inputTextField = textField
-        //     textField.placeholder = "グループID(任意)"
-        // }
-//        alertController.addTextFieldWithConfigurationHandler { textField -> Void in
-//            passwordField = textField
-//            textField.secureTextEntry = true
-//            textField.placeholder = "password"
-//        }
-        
         presentViewController(alertController, animated: true, completion: nil)
     }
     
-    func newGroupAdd(){
+    func postNewGroup(){
         let urlHead:String = self.localdata.objectForKey("siteURL") as! String
-        // apiで取得するためのURLを指定
         let auth_token = String(self.localdata.objectForKey("auth_token")!)
-        let URL = NSURL(string: "\(urlHead):80/api/v1/group.json")
-        let req = NSMutableURLRequest(URL:URL!)
-        let configuration = NSURLSessionConfiguration.defaultSessionConfiguration()
-        let session = NSURLSession(configuration: configuration, delegate:nil, delegateQueue:NSOperationQueue.mainQueue())
-        let name = self.groupName.text!
+        var getStatus:Int?
+        let name:String = groupName.text!
         
-        req.HTTPMethod = "POST"
-        req.HTTPBody = "auth_token=\(auth_token)&name=\(name)".dataUsingEncoding(NSUTF8StringEncoding)
-        
-        let task = session.dataTaskWithRequest(req, completionHandler: {
-            (data, response, error) -> Void in
+        Alamofire.request(.POST ,  "\(urlHead):80/api/v1/group.json" , 
+                        parameters:["auth_token":"\(auth_token)",
+                                    "name"      :"\(name)"
+                        ]).response{( request , response , data , error) in
             do{
-                let json = try NSJSONSerialization.JSONObjectWithData(data!, options:NSJSONReadingOptions.AllowFragments )
-                
-                let res:NSDictionary = json.objectForKey("meta") as! NSDictionary
-                
-                if String(res["status"]!) == "201"{
+                var obj : AnyObject? = try NSJSONSerialization.JSONObjectWithData(data!, options: NSJSONReadingOptions.AllowFragments)
+                if let meta = obj!["meta"] as? [String : AnyObject]{
+                    if let status = meta["status"] as? Int{
+                        // print(status)
+                        getStatus = status
+                    }
+                    if let message = meta["message"] as? String{
+                        // print(message)
+                    }
+                }
+                if(getStatus! == 201){
                     self.inputAlert()
+                    self.groupName.text = nil
+                    self.groupName.placeholder = "new group name"
                 }else{
                     print("作成できませんでした")
                 }
             }catch{
                 print("Error")
             }
-            
-        })
-        
-        task.resume()
+        }
     }
 
     /*

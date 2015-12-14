@@ -133,6 +133,7 @@ class SignUpViewController: UIViewController , UITextFieldDelegate {
                 }
                 if(self.postStatus! == 201){
                     self.localdata.setObject(self.token , forKey:"auth_token")
+                    self.localdata.setObject(self.screen_name.text! , forKey:"userName")
                     self.localdata.synchronize()
                     self.performSegueWithIdentifier("homeViewSegue", sender: self)
                 }

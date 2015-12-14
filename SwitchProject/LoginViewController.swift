@@ -148,6 +148,7 @@ class LoginViewController: UIViewController , UITextFieldDelegate {
                 if(self.loginStatus! == 201){
                     print("gaga")
                     self.localdata.setObject(self.auth_token! , forKey:"auth_token")
+                    self.localdata.setObject(self.user_name.text! , forKey:"userName")
                     self.localdata.synchronize()
                     self.performSegueWithIdentifier("loginHomeSegue", sender: self)
                 }
