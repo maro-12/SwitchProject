@@ -1,0 +1,6 @@
+framework module Pods_SwitchProjectTests {
+  umbrella header "Pods-SwitchProjectTests-umbrella.h"
+
+  export *
+  module * { export * }
+}

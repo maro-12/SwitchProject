@@ -20,6 +20,7 @@ class AppDelegate: UIResponder, UIApplicationDelegate {
         let defaultSet = NSUserDefaults.standardUserDefaults()
         let dic = ["firstLaunch": true]
         defaultSet.registerDefaults(dic)
+        localdata.setObject("http://db588d45.ngrok.io" , forKey : "siteURL")
         localdata.setObject(nil , forKey: "auth_token")
         localdata.synchronize()
         // Override point for customization after application launch.

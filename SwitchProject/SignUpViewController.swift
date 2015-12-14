@@ -13,15 +13,46 @@ class SignUpViewController: UIViewController , UITextFieldDelegate {
     override func viewDidLoad() {
         super.viewDidLoad()
         screen_name.delegate = self
+        screen_name.placeholder = "name"
         email.delegate = self
+        email.placeholder = "polunga.example@gmail.com"
         confirmation.delegate = self
+        confirmation.placeholder = "polunga.example@gmail.com"
         password.delegate = self
         password.secureTextEntry = true
+        password.placeholder = "password"
+        
+//        UIGraphicsBeginImageContext(frontView.frame.size);
+//        [[UIImage imageNamed:"backgroundImg.png"] drawInRect:self.view.bounds];
+//        var backgroundImage:UIImage = UIGraphicsGetImageFromCurrentImageContext();
+//        UIGraphicsEndImageContext();
+////        self.view.backgroundColor = [UIColor colorWithPatternImage:backgroundImage];
+//        let backgroundImage = UIImage(named: "backgroundImg")!
+//        let myImageView = UIImageView()
+//        myImageView.image = backgroundImage
+//        myImageView.frame = CGRectMake(0, 0, frontView.frame.width, frontView.frame.height)
+//        myScrollView.addSubview(myImageView)
+//        myScrollView.contentSize = CGSizeMake(myImageView.frame.size.width, myImageView.frame.size.height)
+//        frontView.backgroundColor = UIColor(patternImage: backgroundImage)
+        textDesign(screen_name)
+        textDesign(email)
+        textDesign(confirmation)
+        textDesign(password)
+        
+        buttonDesign(signUpButton)
+        buttonDesign(loginViewButton)
+        
+
         
         getData()
         
     }
 
+    @IBOutlet weak var frontView: UIView!
+    @IBOutlet weak var myScrollView: UIScrollView!
+    @IBOutlet weak var signUpButton: UIButton!
+    @IBOutlet weak var loginViewButton: UIButton!
+    
     override func didReceiveMemoryWarning() {
         super.didReceiveMemoryWarning()
     }
@@ -32,6 +63,26 @@ class SignUpViewController: UIViewController , UITextFieldDelegate {
     @IBOutlet weak var confirmation: UITextField!
     @IBOutlet weak var errorMessage: UITextView!
     
+    func buttonDesign(button : UIButton){
+        let borderWidth :CGFloat = 1.0
+        button.backgroundColor = UIColor.mcOrange500()
+        // button.layer.borderColor = UIColor.mcOrange500().CGColor
+        // button.layer.borderWidth = borderWidth
+        button.layer.cornerRadius = 5
+        // button.layer.shadowOpacity = 0.4
+        // button.layer.shadowOffset = CGSizeMake(3.0 , 3.0)
+     }
+    
+    func textDesign(textField :UITextField!){
+        let border = CALayer()
+        let width = CGFloat(1.0)
+        border.borderColor = UIColor.mcGrey200().CGColor
+        border.frame = CGRect(x: 0, y: textField.frame.size.height - width, width:  textField.frame.size.width, height: textField.frame.size.height)
+        
+        border.borderWidth = width
+        textField.layer.addSublayer(border)
+        textField.layer.masksToBounds = true
+    }
     
     let localdata = NSUserDefaults.standardUserDefaults()
     

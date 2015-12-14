@@ -18,6 +18,12 @@ class LoginViewController: UIViewController , UITextFieldDelegate {
         user_name.delegate = self
         user_passwd.delegate = self
         user_passwd.secureTextEntry = true
+
+        textDesign(user_name)
+        textDesign(user_passwd)
+
+        buttonDesign(loginButton)
+        buttonDesign(newAccountButton)
     }
 
     override func didReceiveMemoryWarning() {
@@ -28,6 +34,8 @@ class LoginViewController: UIViewController , UITextFieldDelegate {
     @IBOutlet weak var user_name: UITextField!
     @IBOutlet weak var user_passwd: UITextField!
     
+    @IBOutlet weak var loginButton: UIButton!
+    @IBOutlet weak var newAccountButton: UIButton!
     
     @IBAction func login(sender: UIButton) {
         if(self.user_name == nil || self.user_passwd == nil){
@@ -35,6 +43,27 @@ class LoginViewController: UIViewController , UITextFieldDelegate {
         }
         postData()
         //        self.performSegueWithIdentifier("homeViewSegue", sender: self)
+    }
+
+    func buttonDesign(button : UIButton){
+        let borderWidth :CGFloat = 1.0
+        button.backgroundColor = UIColor.mcOrange500()
+        // button.layer.borderColor = UIColor.mcOrange500().CGColor
+        // button.layer.borderWidth = borderWidth
+        button.layer.cornerRadius = 9
+        // button.layer.shadowOpacity = 0.4
+        // button.layer.shadowOffset = CGSizeMake(3.0 , 3.0)
+     }
+
+    func textDesign(textField :UITextField!){
+        let border = CALayer()
+        let width = CGFloat(1.0)
+        border.borderColor = UIColor.mcGrey200().CGColor
+        border.frame = CGRect(x: 0, y: textField.frame.size.height - width, width:  textField.frame.size.width, height: textField.frame.size.height)
+        
+        border.borderWidth = width
+        textField.layer.addSublayer(border)
+        textField.layer.masksToBounds = true
     }
     
     func textFieldShouldReturn(textField: UITextField) -> Bool{
@@ -68,7 +97,6 @@ class LoginViewController: UIViewController , UITextFieldDelegate {
                 let resResponse:NSDictionary = json.objectForKey("response") as! NSDictionary
                 
 //                print(String(res["status"]!))
-                
                 if String(res["status"]!) == "201"{
                     self.localdata.setObject(String(resResponse["auth_token"]!) , forKey: "auth_token")
                     self.localdata.synchronize()
