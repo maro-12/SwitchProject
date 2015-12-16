@@ -85,7 +85,7 @@ class HomeViewController: UIViewController {
         button.backgroundColor = UIColor.mcOrange300()
         button.layer.cornerRadius = 3
         button.layer.shadowOpacity = 0.4
-        button.layer.shadowOffset = CGSizeMake(3.0 , 3.0)
+        button.layer.shadowOffset = CGSizeMake(1.0 , 2.0)
     }
     
     func roundButtonLayout(button :UIButton){
@@ -118,10 +118,10 @@ class HomeViewController: UIViewController {
         var group_id:Int?
         Alamofire.request(.GET , "\(urlHead):80/api/v1/group.json?auth_token=\(auth_token)" ).response{(request , response , data , error) in
             do{
-                var obj : AnyObject? = try NSJSONSerialization.JSONObjectWithData(data!, options: NSJSONReadingOptions.AllowFragments)
+                let obj : AnyObject? = try NSJSONSerialization.JSONObjectWithData(data!, options: NSJSONReadingOptions.AllowFragments)
                 if let meta = obj!["meta"] as? [String : AnyObject]{
 //                    print("fuga")
-                    if let status = meta["status"] as? Int{
+                    if let _ = meta["status"] as? Int{
                         // print("getGroupのステータスは\(status)")
                     }
                 }

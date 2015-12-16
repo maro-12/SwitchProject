@@ -42,7 +42,7 @@ class InfraredIndexViewController: UIViewController {
         }else{
             print("fugafuga")
             getGroupInfrared()
-            var button = UIButton()
+            let button = UIButton()
             button.frame = CGRectMake(0,0,40,40)
             button.setTitle("+" , forState: UIControlState.Normal)
             button.setTitleColor(UIColor.whiteColor() , forState: UIControlState.Normal)
@@ -65,7 +65,7 @@ class InfraredIndexViewController: UIViewController {
     func infraredButton(){
         for name in self.infraredList.keys{
             buttonSet(name , yPosition : firstButtonPosition)
-            firstButtonPosition += 40
+            firstButtonPosition += 50
         }
     }
     
@@ -119,7 +119,7 @@ class InfraredIndexViewController: UIViewController {
         button.layer.masksToBounds = true
         button.layer.cornerRadius = 20
         button.layer.shadowOpacity = 0.4
-        button.layer.shadowOffset = CGSizeMake(2.0 , 2.0)
+        button.layer.shadowOffset = CGSizeMake(3.0 , 3.0)
     }
 
     func onClickMyButton(sender : UIButton) {
@@ -162,16 +162,16 @@ class InfraredIndexViewController: UIViewController {
     func getInfrared(){
         let urlHead:String = self.localdata.objectForKey("siteURL") as! String
         let auth_token = String(localdata.objectForKey("auth_token")!)
-        var getStatus:Int?
+//        var getStatus:Int?
         var infrared_name:String?
         var infrared_id:Int?
         
         Alamofire.request(.GET , "\(urlHead):80/api/v1/ir.json?auth_token=\(auth_token)").response{(request , response , data , error) in 
             do{
-                var obj : AnyObject? = try NSJSONSerialization.JSONObjectWithData(data!, options: NSJSONReadingOptions.AllowFragments)
+                let obj : AnyObject? = try NSJSONSerialization.JSONObjectWithData(data!, options: NSJSONReadingOptions.AllowFragments)
                 if let meta = obj!["meta"] as? [String : AnyObject]{
-                    if let status = meta["status"] as? Int{
-                        getStatus = status
+                    if let _ = meta["status"] as? Int{
+//                        getStatus = status
                     }
                 }
                 if let response = obj!["response"] as? [String:AnyObject]{
@@ -199,7 +199,7 @@ class InfraredIndexViewController: UIViewController {
     func getGroupInfrared(){
         let urlHead:String = self.localdata.objectForKey("siteURL") as! String
         let auth_token = String(localdata.objectForKey("auth_token")!)
-        var getStatus:Int?
+//        var getStatus:Int?
         var infrared_name:String?
         var infrared_id:Int?
         
@@ -208,10 +208,10 @@ class InfraredIndexViewController: UIViewController {
                                 "group_id"   :self.groupID!
                                 ]).response{(request , response , data , error) in
             do{
-                var obj : AnyObject? = try NSJSONSerialization.JSONObjectWithData(data!, options: NSJSONReadingOptions.AllowFragments)
+                let obj : AnyObject? = try NSJSONSerialization.JSONObjectWithData(data!, options: NSJSONReadingOptions.AllowFragments)
                 if let meta = obj!["meta"] as? [String : AnyObject]{
-                    if let status = meta["status"] as? Int{
-                        print(status)
+                    if let _ = meta["status"] as? Int{
+//                        print(status)
                     }
                 }
                 if let response = obj!["response"] as? [String:AnyObject]{
@@ -253,7 +253,7 @@ class InfraredIndexViewController: UIViewController {
                                     "ir_id"     :"\(ir_id)"
                         ]).response{(request , response , data , error ) in 
             do{
-                var obj : AnyObject? = try NSJSONSerialization.JSONObjectWithData(data!, options: NSJSONReadingOptions.AllowFragments)
+                let obj : AnyObject? = try NSJSONSerialization.JSONObjectWithData(data!, options: NSJSONReadingOptions.AllowFragments)
                 if let meta = obj!["meta"] as? [String : AnyObject]{
                     print("fuga")
                     if let status = meta["status"] as? Int{
@@ -290,7 +290,7 @@ class InfraredIndexViewController: UIViewController {
                                     "ir_id"      :"\(infrared_id!)"
                                     ]).response{(request , response , data , error ) in
             do{
-                var obj : AnyObject? = try NSJSONSerialization.JSONObjectWithData(data!, options: NSJSONReadingOptions.AllowFragments)
+                let obj : AnyObject? = try NSJSONSerialization.JSONObjectWithData(data!, options: NSJSONReadingOptions.AllowFragments)
                 if let meta = obj!["meta"] as? [String:AnyObject]{
                     print("fuga")
                     if let status = meta["status"] as? Int{
@@ -313,13 +313,13 @@ class InfraredIndexViewController: UIViewController {
     func deleteInfrared(sender:UIButton){
         let urlHead:String = self.localdata.objectForKey("siteURL") as! String
         let auth_token = String(localdata.objectForKey("auth_token")!)
-        var infrared_name = sender.currentTitle!
-        var infrared_id = self.infraredList[infrared_name]
+        let infrared_name = sender.currentTitle!
+        let infrared_id = self.infraredList[infrared_name]
         var getStatus:Int?
 
         Alamofire.request(.DELETE , "\(urlHead):80/api/v1/ir.json" , parameters:["auth_token":auth_token , "ir_id":infrared_id!]).response{(request , response , data , error) in
             do{
-                var obj : AnyObject? = try NSJSONSerialization.JSONObjectWithData(data!, options: NSJSONReadingOptions.AllowFragments)
+                let obj : AnyObject? = try NSJSONSerialization.JSONObjectWithData(data!, options: NSJSONReadingOptions.AllowFragments)
                 if let meta = obj!["meta"] as? [String : AnyObject]{
                     print("fuga")
                     if let status = meta["status"] as? Int{

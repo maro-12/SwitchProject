@@ -111,7 +111,7 @@ class NewInfraredViewController: UIViewController , UITextFieldDelegate {
         Alamofire.request(.POST , "\(urlHead):80/api/v1/ir/receive.json" ,
                         parameters:["auth_token":"\(auth_token)"]).response{(request , response , data , error) in 
             do{
-                var obj : AnyObject? = try NSJSONSerialization.JSONObjectWithData(data!, options: NSJSONReadingOptions.AllowFragments)
+                let obj : AnyObject? = try NSJSONSerialization.JSONObjectWithData(data!, options: NSJSONReadingOptions.AllowFragments)
                 if let meta = obj!["meta"] as? [String : AnyObject]{
                     if let status = meta["status"] as? Int{
                         getStatus = status
@@ -153,7 +153,7 @@ class NewInfraredViewController: UIViewController , UITextFieldDelegate {
                                     "ir_id"     :"\(self.ir_id!)"
                                     ]).response{(request , response , data , error ) in
             do{
-                var obj : AnyObject? = try NSJSONSerialization.JSONObjectWithData(data!, options: NSJSONReadingOptions.AllowFragments)
+                let obj : AnyObject? = try NSJSONSerialization.JSONObjectWithData(data!, options: NSJSONReadingOptions.AllowFragments)
                 if let meta = obj!["meta"] as? [String:AnyObject]{
                     print("fuga")
                     if let status = meta["status"] as? Int{
