@@ -45,7 +45,6 @@ class LoginViewController: UIViewController , UITextFieldDelegate {
             sender.enabled = false
         }
         postLogin()
-        //        self.performSegueWithIdentifier("homeViewSegue", sender: self)
     }
 
     func buttonDesign(button : UIButton){
@@ -74,55 +73,6 @@ class LoginViewController: UIViewController , UITextFieldDelegate {
         return true
     }
 
-//     func postData(){
-//         let urlHead:String = self.localdata.objectForKey("siteURL") as! String
-//         // apiで取得するためのURLを指定
-//         let URL = NSURL(string: "\(urlHead):80/api/v1/auth/login.json")
-//         let req = NSMutableURLRequest(URL:URL!)
-        
-        
-//         let configuration = NSURLSessionConfiguration.defaultSessionConfiguration()
-//         let session = NSURLSession(configuration: configuration, delegate:nil, delegateQueue:NSOperationQueue.mainQueue())
-        
-        
-//         req.HTTPMethod = "POST"
-//         req.HTTPBody = "email_or_screen_name=\(self.user_name.text!)&password=\(self.user_passwd.text!)".dataUsingEncoding(NSUTF8StringEncoding)
-        
-// //        print(self.user_name.text!)
-// //        print(self.user_passwd.text!)
-// //        
-//         let task = session.dataTaskWithRequest(req, completionHandler: {
-//             (data, response, error) -> Void in
-//             do{
-//                 let json = try NSJSONSerialization.JSONObjectWithData(data!, options:NSJSONReadingOptions.AllowFragments )
-                
-//                 let res:NSDictionary = json.objectForKey("meta") as! NSDictionary
-//                 let resResponse:NSDictionary = json.objectForKey("response") as! NSDictionary
-                
-// //                print(String(res["status"]!))
-//                 if String(res["status"]!) == "201"{
-//                     self.localdata.setObject(String(resResponse["auth_token"]!) , forKey: "auth_token")
-//                     self.localdata.synchronize()
-//                     self.performSegueWithIdentifier("loginHomeSegue", sender: self)
-//                 }else{
-//                     print("Loginできませんでした")
-//                 }
-//                 //                print(String(res["status"]!))
-//                 //                self.localdata.setObject(res["status"] , forKey: "status")
-//                 //                self.localdata.synchronize()
-//                 //              msg = res["message"] as! String
-//                 //              print(msg)
-                
-//             }catch{
-// //                self.performSegueWithIdentifier("errorSegue", sender: self)
-//                 print("Error")
-//             }
-            
-//         })
-        
-//         task.resume()
-//     }
-
     func postLogin(){
         let urlHead:String = self.localdata.objectForKey("siteURL") as! String
         print(self.user_name.text!)
@@ -134,19 +84,16 @@ class LoginViewController: UIViewController , UITextFieldDelegate {
                 var obj : AnyObject? = try NSJSONSerialization.JSONObjectWithData(data!, options: NSJSONReadingOptions.AllowFragments)
                 if let meta = obj!["meta"] as? [String:AnyObject]{
                     if let status = meta["status"] as? Int{
-                        print(status)
                         self.loginStatus = status
                     }
                 }
                 if let response = obj!["response"] as? [String:AnyObject]{
                     print("fuga")
                     if let token = response["auth_token"] as? String{
-                        print("fugaaaa")
                         self.auth_token = token
                     }
                 }
                 if(self.loginStatus! == 201){
-                    print("gaga")
                     self.localdata.setObject(self.auth_token! , forKey:"auth_token")
                     self.localdata.setObject(self.user_name.text! , forKey:"userName")
                     self.localdata.synchronize()
@@ -157,15 +104,4 @@ class LoginViewController: UIViewController , UITextFieldDelegate {
             }
         }
     }
-
-    /*
-    // MARK: - Navigation
-
-    // In a storyboard-based application, you will often want to do a little preparation before navigation
-    override func prepareForSegue(segue: UIStoryboardSegue, sender: AnyObject?) {
-        // Get the new view controller using segue.destinationViewController.
-        // Pass the selected object to the new view controller.
-    }
-    */
-
 }

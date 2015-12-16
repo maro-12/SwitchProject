@@ -33,10 +33,14 @@ class AddViewController: UIViewController ,UITextFieldDelegate {
     @IBAction func groupAdd(sender: UIButton) {
         postNewGroup()
     }
+    @IBAction func back(sender: UIBarButtonItem) {
+        let targetViewController = self.storyboard!.instantiateViewControllerWithIdentifier( "TabBarView" )
+        self.presentViewController( targetViewController, animated: true, completion: nil)
+    }
     let localdata = NSUserDefaults.standardUserDefaults()
     
     func buttonDesign(button : UIButton){
-        let borderWidth :CGFloat = 1.0
+//        let borderWidth :CGFloat = 1.0
         button.backgroundColor = UIColor.mcOrange500()
         button.layer.cornerRadius = 9
         button.layer.shadowOpacity = 0.4

@@ -21,18 +21,13 @@ class InfraredIndexViewController: UIViewController {
     
     @IBOutlet weak var scrollView: UIView!
     @IBOutlet weak var userLabel: UILabel!
+    @IBAction func backHome(sender: UIBarButtonItem) {
+        let targetViewController = self.storyboard!.instantiateViewControllerWithIdentifier( "TabBarView" ) 
+        self.presentViewController( targetViewController, animated: true, completion: nil)
+    }
 
     override func viewDidLoad() {
         super.viewDidLoad()
-//
-//        if let infrared:[String:Int] = localdata.dictionaryForKey("infraredList") as? [String:Int]{
-//            for name in infrared.keys{
-//                buttonSet(name , yPosition:firstButtonPosition)
-//                firstButtonPosition += 5
-////                print(name)
-//            }
-//        }
-        // Do any additional setup after loading the view.
     }
     
     override func viewWillAppear(animated:Bool){
@@ -40,27 +35,31 @@ class InfraredIndexViewController: UIViewController {
         let username = String(localdata.objectForKey("userName")!)
         userLabel.text = username
         // self.localdata.removeObjectForKey("infraredList")
-         groupID = localdata.integerForKey("groupID")
+        groupID = localdata.integerForKey("groupID")
         if(groupID == 0){
+            print("hogehoge")
             getInfrared()
-            // apiURL = "\(urlHead):80/api/v1/ir.json?auth_token=\(auth_token)"
         }else{
+            print("fugafuga")
             getGroupInfrared()
-            // apiURL =  "\(urlHead):80/api/v1/group/ir.json?auth_token=\(auth_token)&group_id=\(groupID)"
+            var button = UIButton()
+            button.frame = CGRectMake(0,0,40,40)
+            button.setTitle("+" , forState: UIControlState.Normal)
+            button.setTitleColor(UIColor.whiteColor() , forState: UIControlState.Normal)
+            button.layer.position = CGPoint(x: 260, y:400)
+            button.addTarget(self, action: "addInfraredToGroup:", forControlEvents: .TouchUpInside)
+            self.roundButtonLayout(button)
+            self.scrollView.addSubview(button)
         }
     }
     
-//    override func viewDidAppear(animated: Bool) {
-//        super.viewDidAppear(animated)
-//        for name in self.infraredList.keys{
-//            buttonSet(name , yPosition : firstButtonPosition)
-//            firstButtonPosition += 5
-//        }
-//    }
-
     override func didReceiveMemoryWarning() {
         super.didReceiveMemoryWarning()
         // Dispose of any resources that can be recreated.
+    }
+
+    func addInfraredToGroup(sender:UIButton){
+        self.performSegueWithIdentifier("toInfraredAddGroupSegue" , sender: self)
     }
     
     func infraredButton(){
@@ -80,17 +79,43 @@ class InfraredIndexViewController: UIViewController {
         
         self.scrollView.addSubview(myButton)
         self.buttonLayout(myButton)
+        self.editButtonSet(buttonName , yPosition: yPosition)
+        self.trashButtonSet(buttonName , yPosition: yPosition)
+    }
+
+    func editButtonSet(name:String , yPosition:Int){
+        let image = UIImage(named: "edit.png")
+        let imageButton = UIButton()
+        imageButton.frame = CGRectMake(0, 0, 20, 20)
+        imageButton.layer.position = CGPoint(x: (self.view.frame.width - 60 ) , y:CGFloat(yPosition+2))
+        imageButton.setImage(image, forState: .Normal)
+        imageButton.setTitle(name , forState: UIControlState.Normal)
+        imageButton.addTarget(self, action: "inputEditAlert:", forControlEvents:.TouchUpInside)
+         
+        self.scrollView.addSubview(imageButton)
+    }
+
+    func trashButtonSet(name:String , yPosition : Int){
+        let image = UIImage(named: "trash.png")
+        let imageButton   = UIButton()
+        imageButton.frame = CGRectMake(0, 0, 20, 20)
+        imageButton.layer.position = CGPoint(x: (self.view.frame.width - 35 ) , y:CGFloat(yPosition+2))
+        imageButton.setImage(image, forState: .Normal)
+        imageButton.setTitle(name , forState: UIControlState.Normal)
+        imageButton.addTarget(self, action: "deleteInfrared:", forControlEvents:.TouchUpInside)
+         
+        self.scrollView.addSubview(imageButton)
     }
     
     func buttonLayout (button : UIButton){
-        button.backgroundColor = UIColor.mcTeal100()
+        button.backgroundColor = UIColor.mcOrange300()
         button.layer.cornerRadius = 3
         button.layer.shadowOpacity = 0.4
         button.layer.shadowOffset = CGSizeMake(3.0 , 3.0)
     }
     
     func roundButtonLayout(button :UIButton){
-        button.backgroundColor = UIColor.mcTeal100()
+        button.backgroundColor = UIColor.mcOrange300()
         button.layer.masksToBounds = true
         button.layer.cornerRadius = 20
         button.layer.shadowOpacity = 0.4
@@ -98,80 +123,40 @@ class InfraredIndexViewController: UIViewController {
     }
 
     func onClickMyButton(sender : UIButton) {
-        // if let infrared:[String:Int] = localdata.dictionaryForKey("infraredList") as? [String:Int]{
-        //     let name:String = sender.currentTitle!
-        //     let id:Int = infrared[name]!
-        //     sendInfrared(id)
-        // }
         let name:String = sender.currentTitle!
         let id:Int = infraredList[name]!
         postInfrared(id)
-//        print(infraredCountList)
     }
+
+
     
-//     func getInfrared(){
-// //        infraredList = [:]
-//         let urlHead:String = self.localdata.objectForKey("siteURL") as! String
-//         // apiで取得するためのURLを指定
-//         var groupIs = false
-//         let auth_token = String(localdata.objectForKey("auth_token")!)
-//         var str:String = ""
-//         let groupID:Int
-//         if(self.localdata.objectForKey("groupID") != nil){
-//             groupID = self.localdata.objectForKey("groupID") as! Int
-//             print(groupID)
-//             print("hogehoge")
-//             str =
-//             groupIs = true
-//         }else{
-//             print("fugafuga")
-//         }
-//         let URL = NSURL(string: str)
-//         let req = NSMutableURLRequest(URL:URL!)
+    func inputEditAlert(sender:UIButton) {
+        var infraredNameTextField: UITextField?
+        let old_Ir_name = sender.currentTitle!
+        var new_Ir_name:String?
+        var ir_id:Int?
+
+        let alertController: UIAlertController = UIAlertController(title: "名前をつけてね", message: "Input infrared name", preferredStyle: .Alert)
         
+        alertController.addTextFieldWithConfigurationHandler { textField -> Void in
+            infraredNameTextField = textField
+            textField.placeholder = old_Ir_name
+        }
+
+        let cancelAction: UIAlertAction = UIAlertAction(title: "Cancel", style: .Cancel) { action -> Void in
+        }
+        let logintAction: UIAlertAction = UIAlertAction(title: "Done", style: .Default) { action ->  Void in
+            ir_id = self.infraredList[old_Ir_name]
+            new_Ir_name = infraredNameTextField!.text
+            self.putInfraredRename(old_Ir_name , infrared_name: new_Ir_name! , infrared_id: ir_id!)
+        }
+
+        alertController.addAction(cancelAction)
+        alertController.addAction(logintAction)
         
-//         let configuration = NSURLSessionConfiguration.defaultSessionConfiguration()
-//         let session = NSURLSession(configuration: configuration, delegate:nil, delegateQueue:NSOperationQueue.mainQueue())
-        
-        
-//         let task = session.dataTaskWithRequest(req, completionHandler: {
-//             (data, response, error) -> Void in
-//             do{
-//                 let json = try NSJSONSerialization.JSONObjectWithData(data!, options:NSJSONReadingOptions.AllowFragments )
-//                 let res:NSDictionary = json.objectForKey("meta") as! NSDictionary
-//                 let resResponse:NSDictionary = json.objectForKey("response") as! NSDictionary
-// //                let resGroup:NSDictionary = resResponse.objectForKey("group") as! NSDictionary
-//                 let list:NSDictionary
-//                 if(groupIs){
-//                     list = resResponse.objectForKey("group") as! NSDictionary
-//                 }else{
-//                     list = resResponse
-//                 }
-//                 if String(res["status"]!) == "200"{
-//                         for item in list["infrareds"] as! NSArray{
-//                             let infraredName:String = item["name"] as! String
-//                             let infraredId:Int = item["id"] as! Int
-//                             let count:Int = item["count"] as! Int
-//                             self.localdata.setInteger(count, forKey: "ir_id")
-//                             self.infraredList[infraredName] = infraredId
-//                             self.localdata.setObject(self.infraredList , forKey: "infraredList")
-//                             self.localdata.synchronize()
-                            
-//                             self.buttonSet(infraredName , yPosition : self.firstButtonPosition)
-//                             self.firstButtonPosition += 5
-//                         }
-//                 }else{
-//                     print("取得できませんでした")
-//                 }
-                
-//             }catch{
-//                 print("Error")
-//             }
-            
-//         })
-        
-//         task.resume()
-//     }
+ 
+        presentViewController(alertController, animated: true, completion: nil)
+    }
 
 
     func getInfrared(){
@@ -218,12 +203,15 @@ class InfraredIndexViewController: UIViewController {
         var infrared_name:String?
         var infrared_id:Int?
         
-        Alamofire.request(.GET , "\(urlHead):80/api/v1/group/ir.json?auth_token=\(auth_token)&group_id=\(self.groupID)" ).response{(request , response , data , error) in
+        Alamofire.request(.GET , "\(urlHead):80/api/v1/group/ir.json" ,
+                    parameters:["auth_token":auth_token ,
+                                "group_id"   :self.groupID!
+                                ]).response{(request , response , data , error) in
             do{
                 var obj : AnyObject? = try NSJSONSerialization.JSONObjectWithData(data!, options: NSJSONReadingOptions.AllowFragments)
                 if let meta = obj!["meta"] as? [String : AnyObject]{
                     if let status = meta["status"] as? Int{
-                        getStatus = status
+                        print(status)
                     }
                 }
                 if let response = obj!["response"] as? [String:AnyObject]{
@@ -232,9 +220,11 @@ class InfraredIndexViewController: UIViewController {
                             for(var i=0 ; i < infraredAllay.count ; i++){
                                 if let infrared = infraredAllay[i] as? [String:AnyObject]{
                                     if let name = infrared["name"] as? String{
+                                        print("きてます")
                                         infrared_name = name
                                     }
-                                    if let id = group["id"] as? Int{
+                                    if let id = infrared["id"] as? Int{
+                                        print("けつべん")
                                         infrared_id = id
                                     }
                                     self.infraredList[infrared_name!] = infrared_id!
@@ -243,7 +233,6 @@ class InfraredIndexViewController: UIViewController {
                         }
                     }
                 }
-                
                 self.infraredButton()
             }catch{
                 print("取得できませんでした")
@@ -252,44 +241,6 @@ class InfraredIndexViewController: UIViewController {
     }
 
     
-    // func sendInfrared(ir_id : Int){
-    //     let urlHead:String = self.localdata.objectForKey("siteURL") as! String
-    //     // apiで取得するためのURLを指定
-    //     let URL = NSURL(string: "\(urlHead):80/api/v1/ir/send.json")
-    //     let req = NSMutableURLRequest(URL:URL!)
-    //     let auth_token = String(localdata.objectForKey("auth_token")!)
-    //     let configuration = NSURLSessionConfiguration.defaultSessionConfiguration()
-    //     let session = NSURLSession(configuration: configuration, delegate:nil, delegateQueue:NSOperationQueue.mainQueue())
-        
-    //     req.HTTPMethod = "POST"
-    //     req.HTTPBody = "auth_token=\(auth_token)&ir_id=\(ir_id)".dataUsingEncoding(NSUTF8StringEncoding)
-    //     let task = session.dataTaskWithRequest(req, completionHandler: {
-    //         (data, response, error) -> Void in
-    //         do{
-    //             let json = try NSJSONSerialization.JSONObjectWithData(data!, options:NSJSONReadingOptions.AllowFragments )
-    //             let res:NSDictionary = json.objectForKey("meta") as! NSDictionary
-    //             let resResponse:NSDictionary = json.objectForKey("response") as! NSDictionary
-                
-    //             if String(res["status"]!) == "201"{
-    //                 let name = resResponse["infrared"]!["name"] as! String
-    //                 let count = resResponse["infrared"]!["count"] as! Int
-    //                 self.infraredCountList[name] = count
-    //                 self.localdata.setObject(self.infraredCountList , forKey: "count")
-    //                 self.localdata.synchronize()
-    //                 print("success!")
-    //             }else{
-    //                 print("赤外線の照射に失敗しました")
-    //             }
-                
-    //         }catch{
-    //             //                self.performSegueWithIdentifier("errorSegue", sender: self)
-    //             print("Error")
-    //         }
-            
-    //     })
-        
-    //     task.resume()
-    // }
 
     func postInfrared(ir_id:Int){
         let urlHead:String = self.localdata.objectForKey("siteURL") as! String
@@ -329,16 +280,62 @@ class InfraredIndexViewController: UIViewController {
         }
     }
 
-    
+    func putInfraredRename(old_infrared_name:String?, infrared_name:String? , infrared_id:Int?){
+        let urlHead:String = self.localdata.objectForKey("siteURL") as! String
+        let auth_token = String(self.localdata.objectForKey("auth_token")!)
+        var getStatus:Int?
+        Alamofire.request(.PUT , "\(urlHead):80/api/v1/ir/rename.json" ,
+                        parameters:["auth_token":"\(auth_token)" ,
+                                    "name"      :"\(infrared_name!)",
+                                    "ir_id"      :"\(infrared_id!)"
+                                    ]).response{(request , response , data , error ) in
+            do{
+                var obj : AnyObject? = try NSJSONSerialization.JSONObjectWithData(data!, options: NSJSONReadingOptions.AllowFragments)
+                if let meta = obj!["meta"] as? [String:AnyObject]{
+                    print("fuga")
+                    if let status = meta["status"] as? Int{
+                        getStatus = status
+                    }
+                }
+                if(getStatus! == 200){
+                    print("りねいむ完了")
+                    self.infraredList[old_infrared_name!] = nil
+                    self.infraredList[infrared_name!] = infrared_id
+                }else{
+                    print("りねいむ失敗")
+                }
+            }catch{
+                print("Error putInfraredRename")
+            }
+        }
+    }    
 
-    /*
-    // MARK: - Navigation
+    func deleteInfrared(sender:UIButton){
+        let urlHead:String = self.localdata.objectForKey("siteURL") as! String
+        let auth_token = String(localdata.objectForKey("auth_token")!)
+        var infrared_name = sender.currentTitle!
+        var infrared_id = self.infraredList[infrared_name]
+        var getStatus:Int?
 
-    // In a storyboard-based application, you will often want to do a little preparation before navigation
-    override func prepareForSegue(segue: UIStoryboardSegue, sender: AnyObject?) {
-        // Get the new view controller using segue.destinationViewController.
-        // Pass the selected object to the new view controller.
+        Alamofire.request(.DELETE , "\(urlHead):80/api/v1/ir.json" , parameters:["auth_token":auth_token , "ir_id":infrared_id!]).response{(request , response , data , error) in
+            do{
+                var obj : AnyObject? = try NSJSONSerialization.JSONObjectWithData(data!, options: NSJSONReadingOptions.AllowFragments)
+                if let meta = obj!["meta"] as? [String : AnyObject]{
+                    print("fuga")
+                    if let status = meta["status"] as? Int{
+                        // print(status)
+                        getStatus = status
+                    }
+                    if let message = meta["message"] as? String{
+                        print(message)
+                    }
+                }
+                if(getStatus! == 200){
+                    self.infraredList[infrared_name] = nil
+                }
+            }catch{
+                print("削除できませんでした")
+            }
+        }
     }
-    */
-
 }

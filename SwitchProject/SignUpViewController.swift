@@ -124,11 +124,11 @@ class SignUpViewController: UIViewController , UITextFieldDelegate {
                 var obj : AnyObject? = try NSJSONSerialization.JSONObjectWithData(data!, options: NSJSONReadingOptions.AllowFragments)
                 if let meta = obj!["meta"] as? [String : AnyObject]{
                     if let status = meta["status"] as? Int{
-                        print(status)
+                        // print(status)
                         self.postStatus = status
                     }
                     if let message = meta["message"] as? String{
-                        print(message)
+                        // print(message)
                     }
                 }
                 if(self.postStatus! == 201){

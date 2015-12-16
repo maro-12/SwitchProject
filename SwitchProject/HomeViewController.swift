@@ -13,7 +13,7 @@ class HomeViewController: UIViewController {
     private var myButton: UIButton!
     let localdata = NSUserDefaults.standardUserDefaults()
     var infraredGroupList = [String:Int]()
-    var firstButtonPosition:Int = 120
+    var firstButtonPosition:Int = 140
     
     @IBOutlet weak var secondView: UIView!
     @IBOutlet weak var addButton: UIButton!
@@ -21,12 +21,13 @@ class HomeViewController: UIViewController {
     
     override func viewDidLoad() {
         super.viewDidLoad()
-        buttonSet("全て" , yPosition:50)
         roundButtonLayout(addButton)
     }
     
     override func viewWillAppear(animated: Bool) {
         super.viewDidDisappear(animated)
+        infraredGroupList = [:]
+        firstButtonPosition = 140
         let username = String(localdata.objectForKey("userName")!)
         userLabel.text = username
         getGroup()
@@ -34,17 +35,31 @@ class HomeViewController: UIViewController {
     
     override func viewDidAppear(animated: Bool) {
         super.viewDidAppear(animated)
+        // self.infraredGroupList = [:]
+
+        // for subview in secondView.subviews {
+        //     subview.removeFromSuperview()
+        // }
     }
-    
+
     override func viewDidDisappear(animated: Bool) {
         super.viewDidDisappear(animated)
+        let views = secondView.subviews
+        for subview in views {
+            if subview.isKindOfClass(UIButton) {
+                subview.removeFromSuperview()
+            }
+        }
+        // print("HomeViewControllerのviewDidDisappearが呼ばれた")
     }
+
 
     override func didReceiveMemoryWarning() {
         super.didReceiveMemoryWarning()
     }
     
     func groupButton(){
+        buttonSet("全て" , yPosition:70)
         for name in self.infraredGroupList.keys{
             buttonSet(name , yPosition: firstButtonPosition)
             firstButtonPosition += 70
@@ -63,16 +78,18 @@ class HomeViewController: UIViewController {
         self.secondView.addSubview(myButton)
         self.buttonLayout(myButton)
     }
+
+
     
     func buttonLayout (button : UIButton){
-        button.backgroundColor = UIColor.mcTeal100()
+        button.backgroundColor = UIColor.mcOrange300()
         button.layer.cornerRadius = 3
         button.layer.shadowOpacity = 0.4
         button.layer.shadowOffset = CGSizeMake(3.0 , 3.0)
     }
     
     func roundButtonLayout(button :UIButton){
-        button.backgroundColor = UIColor.mcTeal100()
+        button.backgroundColor = UIColor.mcOrange300()
         button.layer.masksToBounds = true
         button.layer.cornerRadius = 20
         button.layer.shadowOpacity = 0.4
@@ -83,61 +100,17 @@ class HomeViewController: UIViewController {
         if(sender.currentTitle! == "全て"){
             self.localdata.setInteger(0, forKey: "groupID")
             self.localdata.synchronize()
-            print("遷移前だよ")
             self.performSegueWithIdentifier("InfraredIndexViewSegue", sender: self)
         }else{
-            // if let group:[String:Int] = localdata.dictionaryForKey("InfraredGroupList") as? [String:Int]{
             let groupName = sender.currentTitle!
             let id:Int = self.infraredGroupList[groupName]!
+            print("Homeから遷移のときは\(id)")
             self.localdata.setInteger(id , forKey: "groupID")
             self.localdata.synchronize()
-            // }
             self.performSegueWithIdentifier("InfraredIndexViewSegue", sender: self)
         }
     }
     
-//     func getGroup(){
-// //        localdata.setObject(nil , forKey:"infraredGroupList")
-//         let urlHead:String = self.localdata.objectForKey("siteURL") as! String
-//         // apiで取得するためのURLを指定
-//         let auth_token:String = String(localdata.objectForKey("auth_token")!)
-//         print(auth_token)
-//         let URL = NSURL(string: "\(urlHead):80/api/v1/group.json?auth_token=\(auth_token)")
-//         let req = NSMutableURLRequest(URL:URL!)
-//         let configuration = NSURLSessionConfiguration.defaultSessionConfiguration()
-//         let session = NSURLSession(configuration: configuration, delegate:nil, delegateQueue:NSOperationQueue.mainQueue())
-        
-//         let task = session.dataTaskWithRequest(req, completionHandler: {
-//             (data, response, error) -> Void in
-//             do{
-//                 let json = try NSJSONSerialization.JSONObjectWithData(data!, options:NSJSONReadingOptions.AllowFragments )
-//                 let res:NSDictionary = json.objectForKey("meta") as! NSDictionary
-//                 let resResponse:NSDictionary = json.objectForKey("response") as! NSDictionary
-    
-//                 if String(res["status"]!) == "200"{
-//                     for item in resResponse["groups"] as! NSArray{
-//                         let groupName:String = item["name"] as! String
-//                         let groupId:Int = item["id"] as! Int
-//                         self.infraredGroupList[groupName] = groupId
-//                         self.localdata.setObject(self.infraredGroupList , forKey: "infraredGroupList")
-//                         self.localdata.synchronize()
-// //                        print(self.infraredGroupList)
-// //                        print(groupName)
-//                         print(self.localdata.dictionaryForKey("infraredGroupList"))
-//                     }
-//                 }else{
-//                     print("取得できませんでした")
-//                 }
-                
-//             }catch{
-//                 print("Error")
-//             }
-            
-//         })
-        
-//         task.resume()
-//     }
-
     func getGroup(){
         let urlHead:String = self.localdata.objectForKey("siteURL") as! String
         let auth_token:String = String(localdata.objectForKey("auth_token")!)
@@ -149,11 +122,10 @@ class HomeViewController: UIViewController {
                 if let meta = obj!["meta"] as? [String : AnyObject]{
 //                    print("fuga")
                     if let status = meta["status"] as? Int{
-                        print("getGroupのステータスは\(status)")
+                        // print("getGroupのステータスは\(status)")
                     }
                 }
                 if let response = obj!["response"] as? [String:AnyObject]{
-                    print("responseだよ")
                     if let groupAllay = response["groups"] as? [AnyObject]{
                         for(var i=0 ; i < groupAllay.count ; i++){
                             if let group = groupAllay[i] as? [String:AnyObject]{
@@ -169,13 +141,7 @@ class HomeViewController: UIViewController {
                             }
                         }
                     }
-                    // print(self.infraredGroupList)
                 }
-//                for name in self.infraredGroupList.keys{
-//                    self.buttonSet(name , yPosition: self.firstButtonPosition)
-//                    self.firstButtonPosition += 70
-//                }
-                // print(self.infraredGroupList)
                 self.groupButton()
             }catch{
 
@@ -183,17 +149,4 @@ class HomeViewController: UIViewController {
         }
 //        print(self.infraredGroupList)
     }
-    
-
-
-    /*
-    // MARK: - Navigation
-
-    // In a storyboard-based application, you will often want to do a little preparation before navigation
-    override func prepareForSegue(segue: UIStoryboardSegue, sender: AnyObject?) {
-        // Get the new view controller using segue.destinationViewController.
-        // Pass the selected object to the new view controller.
-    }
-    */
-
 }

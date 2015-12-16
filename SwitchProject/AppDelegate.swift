@@ -1,4 +1,3 @@
-//
 //  AppDelegate.swift
 //  apiTest
 //
@@ -20,7 +19,7 @@ class AppDelegate: UIResponder, UIApplicationDelegate {
         let defaultSet = NSUserDefaults.standardUserDefaults()
         let dic = ["firstLaunch": true]
         defaultSet.registerDefaults(dic)
-        localdata.setObject("http://7b868fd0.ngrok.io" , forKey : "siteURL")
+        localdata.setObject("http://01889666.ngrok.io" , forKey : "siteURL")
         localdata.setObject(nil , forKey: "auth_token")
         localdata.synchronize()
         // Override point for customization after application launch.

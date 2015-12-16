@@ -101,50 +101,12 @@ class NewInfraredViewController: UIViewController , UITextFieldDelegate {
         presentViewController(failedAlertController, animated: true, completion: nil)
     }
     
-    // func postInfraredData(){
-    //     let urlHead:String = self.localdata.objectForKey("siteURL") as! String
-    //     // apiで取得するためのURLを指定
-    //     let auth_token = String(self.localdata.objectForKey("auth_token")!)
-    //     let URL = NSURL(string: "\(urlHead):80/api/v1/ir/receive.json")
-    //     let req = NSMutableURLRequest(URL:URL!)
-        
-        
-    //     let configuration = NSURLSessionConfiguration.defaultSessionConfiguration()
-    //     let session = NSURLSession(configuration: configuration, delegate:nil, delegateQueue:NSOperationQueue.mainQueue())
-        
-        
-    //     req.HTTPMethod = "POST"
-    //     req.HTTPBody = "auth_token=\(auth_token)".dataUsingEncoding(NSUTF8StringEncoding)
-        
-    //     let task = session.dataTaskWithRequest(req, completionHandler: {
-    //         (data, response, error) -> Void in
-    //         do{
-    //             let json = try NSJSONSerialization.JSONObjectWithData(data!, options:NSJSONReadingOptions.AllowFragments )
-                
-    //             let res:NSDictionary = json.objectForKey("meta") as! NSDictionary
-    //             let resResponse:NSDictionary = json.objectForKey("response") as! NSDictionary
-    //             let infrared:NSDictionary = resResponse.objectForKey("infrared") as! NSDictionary
-    //             if String(res["status"]!) == "201"{
-    //                 self.messageLabel.text = "成功！名前をつけてください！"
-    //                 self.ir_id = infrared["id"] as? Int
-    //                 self.inputAlert()
-    //             }else{
-    //                 print("取得できませんでした")
-    //             }
-    //         }catch{
-    //             print("Error")
-    //         }
-            
-    //     })
-    //     print(ir_id)
-    //     task.resume()
-    // }
-
     func postInfrared(){
         let urlHead:String = self.localdata.objectForKey("siteURL") as! String
         let auth_token = String(self.localdata.objectForKey("auth_token")!)
         var getStatus:Int?
         var interimID:Int?
+        var infraredname:String?
 
         Alamofire.request(.POST , "\(urlHead):80/api/v1/ir/receive.json" ,
                         parameters:["auth_token":"\(auth_token)"]).response{(request , response , data , error) in 
@@ -157,6 +119,9 @@ class NewInfraredViewController: UIViewController , UITextFieldDelegate {
                 }
                 if let response = obj!["response"] as? [String:AnyObject]{
                     if let infrared = response["infrared"] as? [String:AnyObject]{
+                        if let name = infrared["name"] as? String{
+                            infraredname = name
+                        }
                         if let id = infrared["id"] as? Int{
                             interimID = id
                         }
@@ -165,6 +130,7 @@ class NewInfraredViewController: UIViewController , UITextFieldDelegate {
                 if(getStatus! == 201){
                     self.messageLabel.text = "成功！名前をつけてください！"
                     self.ir_id = interimID
+                    self.localdata.setInteger(self.ir_id! , forKey:infraredname!)
                     self.timer.invalidate()
                     self.inputAlert()
                 }else{
@@ -175,47 +141,6 @@ class NewInfraredViewController: UIViewController , UITextFieldDelegate {
             }
         }
     }   
-
-//     func putInfraredData(irName:String){
-//         let urlHead:String = self.localdata.objectForKey("siteURL") as! String
-//         // apiで取得するためのURLを指定
-//         let auth_token = String(self.localdata.objectForKey("auth_token")!)
-//         let URL = NSURL(string: "\(urlHead):80/api/v1/ir/rename.json")
-//         let req = NSMutableURLRequest(URL:URL!)
-//         let configuration = NSURLSessionConfiguration.defaultSessionConfiguration()
-//         let session = NSURLSession(configuration: configuration, delegate:nil, delegateQueue:NSOperationQueue.mainQueue())
-        
-// //        let name:String = self.irName
-        
-//         req.HTTPMethod = "PUT"
-//         req.HTTPBody = "auth_token=\(auth_token)&name=\(irName)&ir_id\(ir_id)".dataUsingEncoding(NSUTF8StringEncoding)
-// //        req.setValue(auth_token, forHTTPHeaderField: "auth_token")
-// //        req.setValue(irName, forHTTPHeaderField: "name")
-// //        req.setValue(ir_id, forHTTPHeaderField:"ir_id")
-
-//         let task = session.dataTaskWithRequest(req, completionHandler: {
-//             (data, response, error) -> Void in
-//             do{
-//                 let json = try NSJSONSerialization.JSONObjectWithData(data!, options:NSJSONReadingOptions.AllowFragments )
-//                 let res:NSDictionary = json.objectForKey("meta") as! NSDictionary
-// //                let resResponse:NSDictionary = json.objectForKey("response") as! NSDictionary
-// //                let infrared:NSDictionary = resResponse.objectForKey("infrared") as! NSDictionary
-
-//                 if String(res["status"]!) == "201"{
-// //                    let name:String = infrared["name"] as! String
-//                     self.messageLabel.text = "成功！名前は\(irName)です"
-//                     // self.inputAlert()
-//                 }else{
-//                     print("取得できませんでした")
-//                 }
-//             }catch{
-//                 print("Error")
-//             }
-            
-//         })
-        
-//         task.resume()
-//     }
 
     func putInfraredRename(infrared_name:String?){
         let urlHead:String = self.localdata.objectForKey("siteURL") as! String
@@ -250,16 +175,4 @@ class NewInfraredViewController: UIViewController , UITextFieldDelegate {
             }
         }
     }    
-
-
-    /*
-    // MARK: - Navigation
-
-    // In a storyboard-based application, you will often want to do a little preparation before navigation
-    override func prepareForSegue(segue: UIStoryboardSegue, sender: AnyObject?) {
-        // Get the new view controller using segue.destinationViewController.
-        // Pass the selected object to the new view controller.
-    }
-    */
-
 }
